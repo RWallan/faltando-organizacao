@@ -16,6 +16,7 @@ class User:
     name: Mapped[str] = mapped_column()
     email: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str] = mapped_column()
+    course: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now()
     )
