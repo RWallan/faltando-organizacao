@@ -21,6 +21,10 @@ class UserCreate(UserBase):
     password: UserPassword
 
 
+class UserUpdate(UserBase):
+    password: Optional[UserPassword] = None
+
+
 class UserInDbBase(UserBase):
     model_config = ConfigDict(from_attributes=True)
 

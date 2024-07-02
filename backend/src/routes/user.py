@@ -41,3 +41,25 @@ def get_user_by_id(id: int, db: deps.Session) -> models.User:
         )
 
     return db_user
+
+
+@router.put(
+    '/{id}', response_model=schemas.User, status_code=HTTPStatus.CREATED
+)
+def update_user(id: int, user: schemas.UserUpdate, db: deps.Session):
+    db_user = db.scalar(select(models.User).where(models.User.id == id))
+
+    if not db_user:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Usuário não encontrado.'
+        )
+
+    user_in = user.model_dump(exclude_unset=True)
+    for field in user_in:
+        setattr(db_user, field, user_in[field])
+
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+
+    return db_user

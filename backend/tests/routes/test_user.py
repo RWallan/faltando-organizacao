@@ -53,3 +53,22 @@ def test_get_not_existant_user_must_return_error(client, user):
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json()['detail'] == 'Usuário não encontrado.'
+
+
+def test_update_user_must_return_user(client, user):
+    response = client.put(f'/users/{user.id}', json={'name': 'TesteStr'})
+
+    assert response.status_code == HTTPStatus.CREATED
+    assert response.json() == {
+        'id': 1,
+        'name': 'TesteStr',
+        'email': 'test@test.com',
+        'course': 'Teste',
+    }
+
+
+def test_update_not_existant_user_must_return_error(client, user):
+    response = client.put('/users/2', json={'name': 'TesteStr'})
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json()['detail'] == 'Usuário não encontrado.'
