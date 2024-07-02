@@ -11,9 +11,7 @@ from src.database import models
 router = APIRouter(prefix='/users', tags=['users'])
 
 
-@router.post(
-    '/', response_model=schemas.User, status_code=HTTPStatus.CREATED
-)
+@router.post('/', response_model=schemas.User, status_code=HTTPStatus.CREATED)
 def create_user(user: schemas.UserCreate, db: deps.Session) -> models.User:
     db_user = db.scalar(
         select(models.User).where(models.User.email == user.email)
@@ -29,5 +27,17 @@ def create_user(user: schemas.UserCreate, db: deps.Session) -> models.User:
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+
+    return db_user
+
+
+@router.get('/{id}', response_model=schemas.User)
+def get_user_by_id(id: int, db: deps.Session) -> models.User:
+    db_user = db.scalar(select(models.User).where(models.User.id == id))
+
+    if not db_user:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Usuário não encontrado.'
+        )
 
     return db_user
