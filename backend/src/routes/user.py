@@ -63,3 +63,18 @@ def update_user(id: int, user: schemas.UserUpdate, db: deps.Session):
     db.refresh(db_user)
 
     return db_user
+
+
+@router.delete('/{id}', response_model=schemas.Message)
+def delete_user(id: int, db: deps.Session):
+    db_user = db.scalar(select(models.User).where(models.User.id == id))
+
+    if not db_user:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Usuário não encontrado.'
+        )
+
+    db.delete(db_user)
+    db.commit()
+
+    return schemas.Message(msg='Usuário deletado.')
