@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from src.app import app
 from src.database import init_session, models, reg
+from src.security import Hasher
 
 
 @pytest.fixture()
@@ -39,9 +40,11 @@ def user(session):
     user = models.User(
         name='Teste',
         email='test@test.com',
-        password='test1234',
+        password=Hasher.hash_password('test1234'),
         course='Teste',
     )
+
+    user.clean_pwd = 'test1234'  # pyright: ignore
 
     session.add(user)
     session.commit()

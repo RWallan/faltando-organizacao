@@ -14,6 +14,7 @@ alembic = "^1.13.2"
 pydantic = {extras = ["email"], version = "^2.8.0"}
 pyjwt = "^2.8.0"
 pwdlib = {extras = ["argon2"], version = "^0.2.0"}
+python-multipart = "^0.0.9"
 
 
 [tool.poetry.group.dev.dependencies]
