@@ -5,7 +5,7 @@ from http import HTTPStatus
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import select
 
-from src import deps, schemas
+from src import deps, schemas, security
 from src.database import models
 
 router = APIRouter(prefix='/users', tags=['users'])
@@ -22,7 +22,12 @@ def create_user(user: schemas.UserCreate, db: deps.Session) -> models.User:
             status_code=HTTPStatus.BAD_REQUEST, detail='Email já existe.'
         )
 
-    db_user = models.User(**user.model_dump())
+    db_user = models.User(
+        name=user.name,
+        email=user.email,
+        password=security.Hasher.hash_password(user.password),
+        course=user.course,
+    )
 
     db.add(db_user)
     db.commit()
@@ -55,6 +60,10 @@ def update_user(id: int, user: schemas.UserUpdate, db: deps.Session):
         )
 
     user_in = user.model_dump(exclude_unset=True)
+    if user_in.get('password'):
+        user_in['password'] = security.Hasher.hash_password(
+            user_in['password']
+        )
     for field in user_in:
         setattr(db_user, field, user_in[field])
 
