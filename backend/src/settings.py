@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     )
 
     DATABASE: str
+    SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
 
 
 settings = Settings()  # pyright: ignore
